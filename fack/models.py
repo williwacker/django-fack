@@ -12,6 +12,9 @@ from django.utils.encoding import python_2_unicode_compatible
 from .managers import QuestionManager, QuestionQuerySet
 
 
+AUTH_USER_MODEL = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
+
+
 @python_2_unicode_compatible
 class Topic(models.Model):
     """
@@ -64,9 +67,9 @@ class Question(models.Model):
 
     created_on = models.DateTimeField(_('created on'), default=datetime.datetime.now)
     updated_on = models.DateTimeField(_('updated on'))
-    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('created by'),
+    created_by = models.ForeignKey(AUTH_USER_MODEL, verbose_name=_('created by'),
         null=True, related_name="+")
-    updated_by = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('updated by'),
+    updated_by = models.ForeignKey(AUTH_USER_MODEL, verbose_name=_('updated by'),
         null=True, related_name="+")
 
     if django.VERSION >= (1, 7):
