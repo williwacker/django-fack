@@ -23,7 +23,7 @@ class FAQTagsSyntaxTests(unittest.TestCase):
         
         Assumes the tag doesn't use the parser, so this won't work for block tags.
         """
-        t = template.Token(template.TOKEN_BLOCK, token_contents)
+        t = template.base.Token(template.base.TOKEN_BLOCK, token_contents)
         return tagfunc(None, t)
     
     def test_faqs_for_topic_compile(self):
