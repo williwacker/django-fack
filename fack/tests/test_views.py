@@ -24,7 +24,7 @@ class FAQViewTests(django.test.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "faq/submit_question.html")
 
-    @mock.patch('django.contrib.messages')
+    @mock.patch('fack.views.messages')
     def test_submit_faq_post(self, mock_messages):
         data = {
             'topic': '1',
@@ -32,7 +32,7 @@ class FAQViewTests(django.test.TestCase):
             'answer': 'Blue. I mean red. I mean *AAAAHHHHH....*',
         }
         response = self.client.post('/submit/', data)
-        mock_messages.sucess.assert_called()
+        self.assertEqual(mock_messages.success.call_count, 1)
         self.assertRedirects(response, "/submit/thanks/")
         self.assert_(
             Question.objects.filter(text=data['text']).exists(),
