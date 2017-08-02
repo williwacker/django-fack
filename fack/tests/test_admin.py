@@ -11,7 +11,10 @@ from __future__ import absolute_import
 import mock
 from django.contrib import admin
 from django.contrib.auth.models import User
-from django.utils import unittest
+try:
+    from django.utils import unittest
+except ImportError:  # Django >= 1.9
+    import unittest
 from django.http import HttpRequest
 from django import forms
 from ..admin import QuestionAdmin
@@ -31,7 +34,7 @@ class FAQAdminTests(unittest.TestCase):
         # Test saving a new model.
         req.user = user1
         qa.save_model(req, obj, form, change=False)
-        obj.save.assert_called()
+        self.assertEqual(obj.save.call_count, 1)
         self.assertEqual(obj.created_by, user1, "created_by wasn't set to request.user")
         self.assertEqual(obj.updated_by, user1, "updated_by wasn't set to request.user")
         
@@ -39,6 +42,6 @@ class FAQAdminTests(unittest.TestCase):
         obj.save.reset_mock()
         req.user = user2
         qa.save_model(req, obj, form, change=True)
-        obj.save.assert_called()
+        self.assertEqual(obj.save.call_count, 1)
         self.assertEqual(obj.created_by, user1, "created_by shouldn't have been changed")
         self.assertEqual(obj.updated_by, user2, "updated_by wasn't set to request.user")

@@ -2,13 +2,17 @@ from __future__ import absolute_import
 
 import datetime
 
+import django
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
 from django.utils.encoding import python_2_unicode_compatible
 
-from .managers import QuestionManager
+from .managers import QuestionManager, QuestionQuerySet
+
+
+AUTH_USER_MODEL = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
 
 
 @python_2_unicode_compatible
@@ -63,12 +67,15 @@ class Question(models.Model):
 
     created_on = models.DateTimeField(_('created on'), default=datetime.datetime.now)
     updated_on = models.DateTimeField(_('updated on'))
-    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('created by'),
+    created_by = models.ForeignKey(AUTH_USER_MODEL, verbose_name=_('created by'),
         null=True, related_name="+")
-    updated_by = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('updated by'),
+    updated_by = models.ForeignKey(AUTH_USER_MODEL, verbose_name=_('updated by'),
         null=True, related_name="+")
 
-    objects = QuestionManager()
+    if django.VERSION >= (1, 7):
+        objects = QuestionQuerySet.as_manager()
+    else:
+        objects = QuestionManager()
 
     class Meta:
         verbose_name = _("Frequent asked question")

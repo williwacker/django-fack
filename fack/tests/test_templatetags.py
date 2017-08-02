@@ -2,7 +2,10 @@ from __future__ import absolute_import
 
 import django.test
 from django import template
-from django.utils import unittest
+try:
+    from django.utils import unittest
+except ImportError:  # Django >= 1.9
+    import unittest
 from ..templatetags import faqtags
 from ..models import Topic
 
@@ -20,7 +23,7 @@ class FAQTagsSyntaxTests(unittest.TestCase):
         
         Assumes the tag doesn't use the parser, so this won't work for block tags.
         """
-        t = template.Token(template.TOKEN_BLOCK, token_contents)
+        t = template.base.Token(template.base.TOKEN_BLOCK, token_contents)
         return tagfunc(None, t)
     
     def test_faqs_for_topic_compile(self):
